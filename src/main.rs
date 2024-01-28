@@ -15,7 +15,7 @@ use std::{fmt::Debug, rc::Rc};
 /// layer so that model outputs a single number.
 fn main() {
     let num_inputs: Uint = 1;
-    let perceptrons_per_layer: &[Uint] = &[1, 1, 1];
+    let perceptrons_per_layer: &[Uint] = &[2, 2];
     let should_print_equations = true;
 
     let mut mlp = MLP::new(num_inputs, perceptrons_per_layer);
@@ -194,12 +194,12 @@ impl MLP {
                     if flag_i < 0 {
                         break;
                     } else if flag_i == 0 {
-                        print!("  ");
+                        print!("\\ \\ ");
                         break;
                     }
                 }
             }
-            print!("\x08:\n"); // `\x08` is backspace.
+            print!("\x08\x08:\\\n"); // `\x08` is backspace.
 
             for (mut input_i, coefficient) in case.coefficients.iter().skip(1).enumerate() {
                 input_i += 1; // Skipped 1 element.
@@ -208,39 +208,39 @@ impl MLP {
                     for weight in weight_product.0.iter().rev() {
                         print!(
                             // escape codes are for making dot product symbol bold.
-                            "w_{}{}{}\x1b[1m⋅\x1b[0m",
+                            "w^{{({})}}_{{({},{})}}",
                             weight.idx.perceptron_idx.layer_idx,
                             weight.idx.perceptron_idx.idx,
                             weight.idx.idx
                         );
                     }
-                    print!("\x08 + ");
+                    print!(" + ");
                 }
                 if !coefficient.0.is_empty() {
                     print!("\x08\x08\x08");
                 }
-                print!(")\x1b[1m⋅\x1b[0mx_{} \x1b[1m+\x1b[0m\n", input_i);
+                print!(")x_{{({})}} +\n", input_i);
             }
             print!("(");
             for bias_product in case.coefficients[0].0.iter().rev() {
                 for weight in bias_product.0.iter().rev() {
                     if weight.idx.idx != 0 {
                         print!(
-                            "w_{}{}{}\x1b[1m⋅\x1b[0m",
+                            "w^{{({})}}_{{({},{})}}",
                             weight.idx.perceptron_idx.layer_idx,
                             weight.idx.perceptron_idx.idx,
                             weight.idx.idx
                         );
                     } else {
                         print!(
-                            "b_{}{}\x1b[1m⋅\x1b[0m",
+                            "b^{{({})}}_{{({})}}",
                             weight.idx.perceptron_idx.layer_idx, weight.idx.perceptron_idx.idx
                         );
                     }
                 }
-                print!("\x08 + ");
+                print!(" + ");
             }
-            print!("\x08\x08\x08) \n\n");
+            print!("\x08\x08\x08)\\\\\n\\\n");
         }
         println!("}} End");
     }
